@@ -1,4 +1,4 @@
-/shared/src/commonMain/kotlin/config.kt
+*.config.kt
 *.iml
 .gradle
 /local.properties
