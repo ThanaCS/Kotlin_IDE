@@ -1,14 +1,11 @@
 package com.thana.kotlin_ide
 
 import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.features.*
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.http.parsing.*
 import kotlinx.serialization.json.Json
 
 class IdeRepository {
@@ -25,32 +22,32 @@ class IdeRepository {
     }
 
     @Throws(Exception::class)
-    suspend fun getResponse(script: String): Result<Any> {
+    suspend fun getResponse(script: String): IdeResult<Any> {
         return IdeRepository().fetchData(script)
     }
 
-    private suspend fun fetchData(script: String): Result<Any> {
+    private suspend fun fetchData(script: String): IdeResult<Any> {
 
-        var result: Result<Any> = Result.loading()
+        var ideResult: IdeResult<Any> = IdeResult.loading()
 
         try {
             client.responsePipeline.intercept(HttpResponsePipeline.Transform) { (_, body) ->
-                result = when (context.response.status) {
-                    HttpStatusCode.OK -> Result.success(body)
-                    else -> Result.error(1, "Something went wrong..")
+                ideResult = when (context.response.status) {
+                    HttpStatusCode.OK -> IdeResult.success(body)
+                    else -> IdeResult.error(1, "Something went wrong..")
                 }
             }
-            client.post<Response>(BASE_URL) {
+            client.post<IdeResponse>(BASE_URL) {
                 contentType(ContentType.Application.Json)
-                body = Request().copy(script = script)
+                body = IdeRequest().copy(script = script)
             }
         } catch (exception: Exception) {
-            result = Result.error(
+            ideResult = IdeResult.error(
                 2,
                 "Something went wrong..\n Please check your internet connection then retry"
             )
         }
-        return result
+        return ideResult
     }
 
     companion object {

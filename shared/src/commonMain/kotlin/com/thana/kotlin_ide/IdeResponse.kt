@@ -3,7 +3,7 @@ package com.thana.kotlin_ide
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Response(
+data class IdeResponse(
     val output: String? = null,
     val statusCode: String? = null,
     val memory: String? = null,
@@ -11,7 +11,7 @@ data class Response(
     val error: String? = null,
 )
 
-data class Result<out T>(
+data class IdeResult<out T>(
     val data: T? = null,
     val message: String? = null,
     val error: Error? = null,
@@ -26,16 +26,16 @@ data class Result<out T>(
     }
 
     companion object {
-        fun <T> loading(): Result<T> {
-            return Result(data = null, state = State.LOADING)
+        fun <T> loading(): IdeResult<T> {
+            return IdeResult(data = null, state = State.LOADING)
         }
 
-        fun <T> success(data: T?): Result<T> {
-            return Result(data = data, state = State.SUCCESS)
+        fun <T> success(data: T?): IdeResult<T> {
+            return IdeResult(data = data, state = State.SUCCESS)
         }
 
-        fun <T> error(code: Int? = null, message: String?): Result<T> {
-            return Result(error = Error(code, message), state = State.ERROR)
+        fun <T> error(code: Int? = null, message: String?): IdeResult<T> {
+            return IdeResult(error = Error(code, message), state = State.ERROR)
         }
 
     }
