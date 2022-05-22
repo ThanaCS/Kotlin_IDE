@@ -11,20 +11,20 @@ data class IdeResponse(
     val error: String? = null,
 )
 
+@Serializable
 data class IdeResult<out T>(
     val data: T? = null,
     val message: String? = null,
     val error: Error? = null,
-    val state: State? = null,
-    val errorResponse: T? = null
-) {
-
+    val state: State? = null) {
+    @Serializable
     enum class State {
         LOADING,
         SUCCESS,
         ERROR
     }
 
+    @Serializable
     companion object {
         fun <T> loading(): IdeResult<T> {
             return IdeResult(data = null, state = State.LOADING)
@@ -41,6 +41,7 @@ data class IdeResult<out T>(
     }
 }
 
+@Serializable
 data class Error(
     val code: Int?,
     val message: String?

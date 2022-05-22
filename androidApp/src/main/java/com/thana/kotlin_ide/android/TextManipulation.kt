@@ -13,7 +13,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
 import com.thana.kotlin_ide.android.theme.*
 
-val varKeyWords = listOf("val", "var", "class", "fun")
+val varKeyWords = listOf("val", "var", "class", "fun","data")
 val dataTypes = listOf("String", "Int", "Long", "Char", "Boolean", "Array", "List")
 val otherKeywords = listOf("main")
 val funKeywords = listOf("print")
@@ -78,7 +78,8 @@ fun buildAnnotatedStringWithColors(code: String): AnnotatedString {
             else -> {
                 builder.withStyle(
                     style = SpanStyle(
-                        color = PrimaryColor
+                        color = PrimaryColor,
+                        fontWeight = FontWeight.Bold
                     )
                 ) {
                     append("$word ")

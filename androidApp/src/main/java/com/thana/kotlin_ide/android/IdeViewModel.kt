@@ -18,7 +18,7 @@ class IdeViewModel : ViewModel() {
     fun getOutput(script: String) =
         viewModelScope.launch {
             _state.emit(IDEState.OnProgress)
-            val response = IdeRepository().getResponse(script)
+            val response = IdeRepository().getOutput(script)
             when (response.state) {
                 IdeResult.State.LOADING -> _state.emit(IDEState.OnProgress)
                 IdeResult.State.SUCCESS -> _state.emit(IDEState.OnSuccess(response.data as IdeResponse))
@@ -28,7 +28,6 @@ class IdeViewModel : ViewModel() {
                 }
             }
         }
-
 
     sealed class IDEState {
         object OnProgress : IDEState()

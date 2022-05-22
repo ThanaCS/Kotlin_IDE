@@ -36,8 +36,9 @@ dependencies {
     implementation("androidx.compose.material:material:1.1.1")
     implementation("androidx.compose.ui:ui-tooling:1.1.1")
     implementation("androidx.activity:activity-compose:1.4.0")
-    implementation("androidx.compose.compiler:compiler:1.2.0-beta01")
+    implementation("androidx.compose.compiler:compiler:1.2.0-beta02")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1")
 
 }

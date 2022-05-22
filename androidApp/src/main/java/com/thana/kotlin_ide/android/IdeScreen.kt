@@ -20,7 +20,7 @@ fun IdeScreen(viewModel: IdeViewModel = viewModel()) {
                 }
                 is IdeViewModel.IDEState.OnProgress -> {
                     isLoading.value = true
-                    "Loading.."
+                    "Running.."
                 }
                 is IdeViewModel.IDEState.OnSuccess -> {
                     isLoading.value = false

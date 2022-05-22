@@ -1,5 +1,6 @@
 package com.thana.kotlin_ide.android
 
+import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.LinearProgressIndicator
@@ -37,9 +38,16 @@ fun Editor(output: String, isLoading: Boolean) {
     }
 
     Column {
-        Toolbar(script = text.value.text) {
-            text.value = TextFieldValue("$startText $endText")
-        }
+        Toolbar(script = text.value.text,
+            onClear = { text.value = TextFieldValue("$startText $endText") },
+            onShare = { context ->
+                val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, text.value.text)
+                type = "text/plain"
+            }
+                val shareIntent = Intent.createChooser(sendIntent, null)
+                context.startActivity(shareIntent)})
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
@@ -70,7 +78,6 @@ fun Editor(output: String, isLoading: Boolean) {
                 .fillMaxWidth()
                 .weight(1f)
                 .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-
 
             value = filteredOutput,
             onValueChange = { },

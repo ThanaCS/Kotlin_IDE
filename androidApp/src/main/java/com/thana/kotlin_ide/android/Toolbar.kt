@@ -1,18 +1,16 @@
 package com.thana.kotlin_ide.android
 
+import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.material.icons.rounded.Share
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,9 +26,12 @@ import com.thana.kotlin_ide.android.theme.*
 fun Toolbar(
     viewModel: IdeViewModel = viewModel(),
     script: String,
-    onClear: () -> Unit
+    onClear: () -> Unit,
+    onShare: (Context) -> Unit
 ) {
     val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -103,15 +104,9 @@ fun Toolbar(
                 tint = PrimaryColor,
             )
         }
-        val sendIntent: Intent = Intent().apply {
-            action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, script)
-            type = "text/plain"
-        }
-        val shareIntent = Intent.createChooser(sendIntent, null)
-        val context = LocalContext.current
 
-        IconButton(onClick = { context.startActivity(shareIntent) }) {
+        IconButton(onClick = { onShare(context)
+        }) {
             Icon(
                 imageVector = Icons.Rounded.Share,
                 contentDescription = "Share",

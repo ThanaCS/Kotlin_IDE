@@ -7,6 +7,11 @@ plugins {
 kotlin {
     android()
 
+    kotlin.targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget::class.java) {
+        binaries.all {
+            binaryOptions["memoryModel"] = "experimental"
+        }
+    }
     listOf(
         iosX64(),
         iosArm64(),
@@ -18,15 +23,20 @@ kotlin {
     }
 
     sourceSets {
-        val ktorVersion ="1.6.7"
+        val ktorVersion = "2.0.0"
         val coroutinesVersion = "1.3.9-native-mt"
 
         val commonMain by getting {
             dependencies {
                 implementation("io.ktor:ktor-client-core:$ktorVersion")
-                implementation ("io.ktor:ktor-client-logging:$ktorVersion")
+                implementation("io.ktor:ktor-client-logging:$ktorVersion")
                 implementation("io.ktor:ktor-client-serialization:$ktorVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+
+                implementation("org.jetbrains.kotlin:kotlin-stdlib")
+                implementation("io.ktor:ktor-client-json:$ktorVersion")
+                implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
             }
         }
@@ -40,6 +50,9 @@ kotlin {
             dependencies {
                 implementation("com.google.android.material:material:1.6.0")
                 implementation("io.ktor:ktor-client-android:$ktorVersion")
+                implementation("io.ktor:ktor-client-cio:$ktorVersion")
+                implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
+
             }
         }
         val androidTest by getting {
@@ -57,6 +70,8 @@ kotlin {
             iosArm64Main.dependsOn(this)
             dependencies {
                 implementation("io.ktor:ktor-client-ios:$ktorVersion")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-native:1.3.3")
             }
 
             //iosSimulatorArm64Main.dependsOn(this)
@@ -69,6 +84,9 @@ kotlin {
             iosX64Test.dependsOn(this)
             iosArm64Test.dependsOn(this)
             //iosSimulatorArm64Test.dependsOn(this)
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
+            }
         }
     }
 }
@@ -81,4 +99,5 @@ android {
         minSdk = 21
         targetSdk = 31
     }
+
 }

@@ -1,35 +1,37 @@
 package com.thana.kotlin_ide
 
 import io.ktor.client.*
-import io.ktor.client.features.json.JsonFeature
-import io.ktor.client.features.json.serializer.*
+import io.ktor.client.call.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 
 class IdeRepository {
-    private val client = HttpClient {
-        install(JsonFeature) {
-            val json = Json {
-                isLenient = true
-                ignoreUnknownKeys = true
-                encodeDefaults = true
-                expectSuccess = false
-            }
-            serializer = KotlinxSerializer(json)
+
+    private val httpClientConfig: HttpClientConfig<*>.() -> Unit = {
+        install(ContentNegotiation) {
+            json(
+                Json {
+                    isLenient = true
+                    ignoreUnknownKeys = true
+                    encodeDefaults = true
+                    expectSuccess = false
+                }
+            )
+        }
+        install(Logging) {
+            level = LogLevel.ALL
         }
     }
 
     @Throws(Exception::class)
-    suspend fun getResponse(script: String): IdeResult<Any> {
-        return IdeRepository().fetchData(script)
-    }
-
-    private suspend fun fetchData(script: String): IdeResult<Any> {
-
-        var ideResult: IdeResult<Any> = IdeResult.loading()
-
+    suspend fun getOutput(script: String): IdeResult<Any> {
+        var ideResult: IdeResult<Any>
+        val client = HttpClient(httpClientConfig)
         try {
             client.responsePipeline.intercept(HttpResponsePipeline.Transform) { (_, body) ->
                 ideResult = when (context.response.status) {
@@ -37,14 +39,16 @@ class IdeRepository {
                     else -> IdeResult.error(1, "Something went wrong..")
                 }
             }
-            client.post<IdeResponse>(BASE_URL) {
+
+            ideResult = IdeResult.success(client.post(BASE_URL) {
                 contentType(ContentType.Application.Json)
-                body = IdeRequest().copy(script = script)
-            }
+                setBody(IdeRequest().copy(script = script))
+            }.body<IdeResponse>())
+
         } catch (exception: Exception) {
             ideResult = IdeResult.error(
                 2,
-                "Something went wrong..\n Please check your internet connection then retry"
+                "Something went wrong..\n Please check your internet connection then retry $exception"
             )
         }
         return ideResult
