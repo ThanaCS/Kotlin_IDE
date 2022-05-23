@@ -30,9 +30,10 @@ class IdeRepository {
 
     @Throws(Exception::class)
     suspend fun getOutput(script: String): IdeResult<Any> {
-        var ideResult: IdeResult<Any>
+        var ideResult: IdeResult<Any> = IdeResult.loading()
         val client = HttpClient(httpClientConfig)
         try {
+            ideResult = IdeResult.loading()
             client.responsePipeline.intercept(HttpResponsePipeline.Transform) { (_, body) ->
                 ideResult = when (context.response.status) {
                     HttpStatusCode.OK -> IdeResult.success(body)

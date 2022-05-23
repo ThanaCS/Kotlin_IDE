@@ -1,5 +1,6 @@
 package com.thana.kotlin_ide.android
 
+import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -40,14 +41,8 @@ fun Editor(output: String, isLoading: Boolean) {
     Column {
         Toolbar(script = text.value.text,
             onClear = { text.value = TextFieldValue("$startText $endText") },
-            onShare = { context ->
-                val sendIntent: Intent = Intent().apply {
-                action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, text.value.text)
-                type = "text/plain"
-            }
-                val shareIntent = Intent.createChooser(sendIntent, null)
-                context.startActivity(shareIntent)})
+            onShare = { context -> shareCode(context, text.value.text) }
+        )
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
@@ -86,4 +81,14 @@ fun Editor(output: String, isLoading: Boolean) {
             )
         )
     }
+}
+
+fun shareCode(context: Context, script: String) {
+    val sendIntent: Intent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, script)
+        type = "text/plain"
+    }
+    val shareIntent = Intent.createChooser(sendIntent, null)
+    context.startActivity(shareIntent)
 }
