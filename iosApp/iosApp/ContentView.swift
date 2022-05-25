@@ -64,8 +64,11 @@ struct ContentView: View {
                                     isRunning.self = false
                                 }
                             }
+                            resignFirstResponder()
                             
-                        }) {
+                        }
+                               
+                        ) {
                             Image(systemName: "play.fill")
                                 .imageScale(.large)
                         }
@@ -77,11 +80,14 @@ struct ContentView: View {
         
         
         VStack(alignment: .center) {
-            if let output : String = response.self.data?.output {
-                GeometryReader { geometry in
-                    ScrollView {
-                        Text("Output:\n\(String(describing: output.description).replacingOccurrences(of: "jdoodle.kt", with: ""))").padding()
-                    }
+            Divider().frame(height: 1).background(Color.blue)
+            let output : String = getFilterdOuput(output: response.self.data?.output)
+            
+            GeometryReader { geometry in
+                ScrollView {
+                    Text("Output:\n\(String(describing: output.description))")
+                        .bold()
+                        .padding()
                 }
             }
             if(isRunning.self){
@@ -105,3 +111,15 @@ func shareButton(script:[Any]) {
     UIApplication.shared.windows.first?.rootViewController!.present(activityController, animated: true, completion: nil)
 }
 
+func resignFirstResponder() {
+    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+}
+
+func getFilterdOuput(output:String?) -> String {
+    
+    if  (output != nil){
+        return output!.replacingOccurrences(of: "jdoodle.kt", with: "")
+    } else{
+        return ""
+    }
+}

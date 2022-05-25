@@ -13,12 +13,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
 import com.thana.kotlin_ide.android.theme.*
 
-val varKeyWords = listOf("val", "var", "class", "fun","data")
+val varKeyWords = listOf("val", "var", "class", "fun", "data")
 val dataTypes = listOf("String", "Int", "Long", "Char", "Boolean", "Array", "List")
-val otherKeywords = listOf("main")
-val funKeywords = listOf("print")
-val suggestionList =
-    concatenate(varKeyWords, dataTypes, otherKeywords, funKeywords) as MutableList<String>
+val otherKeywords = listOf("main","this")
+val suggestionList = concatenate(varKeyWords, dataTypes, otherKeywords) as MutableList<String>
 
 class ColorsTransformation : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
@@ -30,61 +28,52 @@ class ColorsTransformation : VisualTransformation {
 }
 
 fun buildAnnotatedStringWithColors(code: String): AnnotatedString {
-    val pattern = "[ \\t]"
+    val pattern = "(?<=[\\s])"
     val words: List<String> = code.split(pattern.toRegex())
     val builder = AnnotatedString.Builder()
     for (word in words) {
-        when (word) {
-            in varKeyWords -> {
-                builder.withStyle(
-                    style = SpanStyle(
-                        color = VarKeyWords,
-                        fontWeight = FontWeight.Bold
-                    )
-                ) {
-                    append("$word ")
+            when (word.trim()) {
+                in varKeyWords -> {
+                    builder.withStyle(
+                        style = SpanStyle(
+                            color = VarKeyWords,
+                            fontWeight = FontWeight.Bold
+                        )
+                    ) {
+                        append(word)
+                    }
                 }
-            }
-            in dataTypes -> {
-                builder.withStyle(
-                    style = SpanStyle(
-                        color = DataTypes,
-                        fontWeight = FontWeight.Bold
-                    )
-                ) {
-                    append("$word ")
+                in dataTypes -> {
+                    builder.withStyle(
+                        style = SpanStyle(
+                            color = DataTypes,
+                            fontWeight = FontWeight.Bold
+                        )
+                    ) {
+                        append(word)
+                    }
                 }
-            }
-            in otherKeywords -> {
-                builder.withStyle(
-                    style = SpanStyle(
-                        color = OtherKeyWords,
-                        fontWeight = FontWeight.Bold
-                    )
-                ) {
-                    append("$word ")
+                in otherKeywords -> {
+                    builder.withStyle(
+                        style = SpanStyle(
+                            color = OtherKeyWords,
+                            fontWeight = FontWeight.Bold
+                        )
+                    ) {
+                        append(word)
+                    }
                 }
-            }
-            in funKeywords -> {
-                builder.withStyle(
-                    style = SpanStyle(
-                        color = funKeyWords,
-                        fontWeight = FontWeight.Bold
-                    )
-                ) {
-                    append("$word ")
+
+                else -> {
+                    builder.withStyle(
+                        style = SpanStyle(
+                            color = PrimaryColor,
+                            fontWeight = FontWeight.Bold
+                        )
+                    ) {
+                        append(word)
+                    }
                 }
-            }
-            else -> {
-                builder.withStyle(
-                    style = SpanStyle(
-                        color = PrimaryColor,
-                        fontWeight = FontWeight.Bold
-                    )
-                ) {
-                    append("$word ")
-                }
-            }
         }
     }
     return builder.toAnnotatedString()
